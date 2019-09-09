@@ -1,5 +1,5 @@
 name: RCChunkHopper
-version: 2.5.1.a
+version: 1.0.0
 description: A plugin which adds a hopper that can pick up items inside a whole chunk. For more info about different options do /rch help.
 author: Lolimi
 
