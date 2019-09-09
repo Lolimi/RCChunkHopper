@@ -1,0 +1,18 @@
+name: RCChunkHopper
+version: 2.5.1.a
+description: A plugin which adds a hopper that can pick up items inside a whole chunk. For more info about different options do /rch help.
+author: Lolimi
+
+main: lolimi.chunkHoppers.main.Main
+
+commands:
+   rch:
+      aliases: [rcchunkhopper, rchopper, chunkhopper, ch]
+      description: Tutorial on how to use all of the functionalities of the Chunk Hopper.
+   gch: 
+      description: Console command to get a Chunk Hopper
+   rmvch:
+      description: Admin command to remove a Chunk Hopper
+   rchdebug:
+   gu1:
+   gu2:
