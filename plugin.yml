@@ -5,6 +5,8 @@ author: Lolimi
 
 main: lolimi.chunkHoppers.main.Main
 
+depend: [ShopGUIPlus, Vault]
+
 commands:
    rch:
       aliases: [rcchunkhopper, rchopper, chunkhopper, ch]
