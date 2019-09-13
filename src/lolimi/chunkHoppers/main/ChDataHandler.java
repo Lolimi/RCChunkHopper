@@ -21,6 +21,8 @@ public class ChDataHandler {
 	public static void setupOfflineSold(String uuid) {
 		String name = Bukkit.getOfflinePlayer(UUID.fromString(uuid)).getName();
 		try {
+			if(!offlineSoldFile.exists())
+				offlineSoldFile.createNewFile();
 			BufferedWriter bw = new BufferedWriter(new FileWriter(offlineSoldFile, true));
 			if(offlineSoldFile.length()!=0)
 				bw.newLine();
@@ -57,6 +59,12 @@ public class ChDataHandler {
 	
 	public static double getOfflineSold(String uuid) {
 		try {
+			if(!offlineSoldFile.exists()) {
+				try {
+					offlineSoldFile.createNewFile();
+				} catch (IOException e) {
+				}
+			}
 			Scanner s = new Scanner(offlineSoldFile);
 			String data;
 			String[] ch;

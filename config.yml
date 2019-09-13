@@ -1,0 +1,78 @@
+#This is the main config of RCHoppers
+#In here you can change the item names for the different items added with this plugin.
+#Please note that if you change a name, all existing items with the old name wont be usable anymore!
+#To use colorcodings use a § before the code.
+#If you delete this file it will get regenerated in the default state.
+#If you want to youse the character : please put ' around the whole entry like in JoinMessage.Message
+
+#IMPORTANT!!! 
+#If you don't want a lore on any item, please use '' like in Explain.Emerald.Lore
+
+
+#The text that comes up before any message in chat
+Prefix: §3[§6RCHoppers§3] 
+
+#Seperate lines in the lore by a comma (,)
+ChunkHopper:
+   Name: §6§lChunk Hopper
+   Lore: §bThis is a Chunk Hopper,§bIt picks up all the items in a chunk!
+   
+Upgrade:
+   1:
+      Name: §aChunk Hopper upgrade
+      Lore: §6Tier 1 §a➜ §6Tier 2
+   2:
+      Name: §aChunk Hopper upgrade
+      Lore: §6Tier 2 §a➜ §6Tier 3
+   
+#The message a player gets 'Delay' ticks after joining
+#Seperate the lines with a comma (,)
+JoinMessage: 
+   Message: 'RC ChunkHoppers: want to pick up every item in one chunk instantly with only one hopper? Try out /rch'
+   Delay: 40
+   
+   
+#If don't want to use the leveling system for the Chunk Hoppers, set this to false
+LevelSystem: true
+
+#If you don't want the sell system (disable tier 3 Chunk Hopper), set this to false
+UseSellSystem: true
+
+#Inventory names for the different GUIs
+#Can't be longer than 32 characters (color codes included) for some legacy versions
+#Please tell me if you know from which version on it can be longer ;)
+SettingsGUI: §3Your Chunk Hopper Settings
+NormalFilterGUI: §3Set up your filter here
+SellingFilterGUI: §3Setup your Selling Filter here
+
+#Item names and lores in the Chunk Hopper settings GUI 
+#Seperate lines in the lore by a comma (,)
+UpgradeHopperItemName: §aClick here to upgrade this §6RCChunkHopper
+OpenNormalFilterItemName: §3Click here to set up a filter for what items should be picked up
+OpenSellingFilterItemName: §3Click here to set up a filter for what items should be sold
+BreakHopperItemName: §4Click here to break this hopper
+SoldItemName: '§6This Chunk Hopper has sold:'
+
+Explain:
+   Book:
+      NormalFilter:
+         Name: §3In here you can set a whitelist or a blacklist of max 45 item types.
+         Lore: §3Blacklisted items will not get picked up.,§3In whitelist mode only set items will get picked up
+      SellingFilter:
+         Name: §3In here you can set a whitelist or a blacklist for selling of max 45 item types.
+         Lore: §3Blacklisted items will not get sold.,§3In whitelist mode only set items will get sold
+   Emerald:
+      Name: §2To add an item, click it in your inventory
+      Lore: ''
+   Redstone:
+      Name: §4To remove an item, click it in the filter inventory
+      Lore: ''
+      
+WhitelistLore:
+   NormalFilter: §7Only picks up items set up in this filter,§7Click to change
+   SellingFilter: §7Only sells items set up in this filter,§7Click to change
+BlacklistLore:
+   NormalFilter: §8Picks up all items but the ones set up in this filter,§8Click to change
+   SellingFilter: §8Sells all items but the ones set up in this filter,§8Click to change
+
+

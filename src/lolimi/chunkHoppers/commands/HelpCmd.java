@@ -16,7 +16,7 @@ public class HelpCmd implements CommandExecutor {
 			sender.sendMessage("");
 			sender.sendMessage("");
 			sender.sendMessage("");
-			sender.sendMessage("§3[§6RCHoppers§3] §cv" +Main.getPlugin().getDescription().getVersion()+" §4Plugin author: §bLolimi");
+			sender.sendMessage(Main.prefix + "§cv" +Main.getPlugin().getDescription().getVersion()+" §4Plugin author: §bLolimi");
 			sender.sendMessage("§4§lGuides:");
 			sender.sendMessage("§3You can buy all types of §6RCHoppers §3in the token shop");
 			sender.sendMessage("§3How to use the §6Chunk Hoppers§3: §2/rch help chunk");
@@ -31,7 +31,7 @@ public class HelpCmd implements CommandExecutor {
 					sender.sendMessage("");
 					sender.sendMessage("");
 					sender.sendMessage("");
-					sender.sendMessage("§3[§6RCHoppers§3] §4How to use the §6Chunk Hopper§4:");
+					sender.sendMessage(Main.prefix + "§4How to use the §6Chunk Hopper§4:");
 					sender.sendMessage("§3For using a §6Chunk Hopper §3you simply place it down.");
 					sender.sendMessage("§3Without changing any settings, it picks up all items inside the");
 					sender.sendMessage("§3chunk it is placed in and transfers them like a normal hopper.");
@@ -49,7 +49,7 @@ public class HelpCmd implements CommandExecutor {
 					sender.sendMessage("");
 					sender.sendMessage("");
 					sender.sendMessage("");
-					sender.sendMessage("§3[§6RCHoppers§3] §cv" +Main.getPlugin().getDescription().getVersion()+" §4Plugin author: §bLolimi");
+					sender.sendMessage(Main.prefix + "§cv" +Main.getPlugin().getDescription().getVersion()+" §4Plugin author: §bLolimi");
 					sender.sendMessage("§4§lGuides:");
 					sender.sendMessage("§3You can buy all types of §6RCHoppers §3in the token shop");
 					sender.sendMessage("§3How to use the §6Chunk Hoppers§3: §2/rch help chunk");
@@ -60,7 +60,7 @@ public class HelpCmd implements CommandExecutor {
 			sender.sendMessage("");
 			sender.sendMessage("");
 			sender.sendMessage("");
-			sender.sendMessage("§3[§6RCHoppers§3] §cv" +Main.getPlugin().getDescription().getVersion()+" §4Plugin author: §bLolimi");
+			sender.sendMessage(Main.prefix + "§cv" +Main.getPlugin().getDescription().getVersion()+" §4Plugin author: §bLolimi");
 			sender.sendMessage("§4§lGuides:");
 			sender.sendMessage("§3You can buy all types of §6RCHoppers §3in the token shop");
 			sender.sendMessage("§3How to use the §6Chunk Hoppers§3: §2/rch help chunk");

@@ -6,6 +6,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
 import lolimi.chunkHoppers.listeners.NewPlaceChunkHopperListener;
+import lolimi.chunkHoppers.listeners.NewPlaceChunkHopperListener1_13;
 import lolimi.chunkHoppers.main.Main;
 
 public class StaticVariableDebug implements CommandExecutor{
@@ -25,6 +26,14 @@ public class StaticVariableDebug implements CommandExecutor{
 		//boolean isChange = NewPlaceChunkHopperListener.isChange();
 		boolean isSet = NewPlaceChunkHopperListener.isSet();
 		boolean isSettingUp = NewPlaceChunkHopperListener.isStillSettingUpFilter();
+		if(!Main.legacy) {
+			locCh = NewPlaceChunkHopperListener1_13.getLocCh();
+			settingsLoc = NewPlaceChunkHopperListener1_13.getSettingsLoc();
+			filterLoc = NewPlaceChunkHopperListener1_13.getFilterLoc();
+			//boolean isChange = NewPlaceChunkHopperListener.isChange();
+			isSet = NewPlaceChunkHopperListener1_13.isSet();
+			isSettingUp = NewPlaceChunkHopperListener1_13.isStillSettingUpFilter();
+		}
 		//boolean isToFilter = NewPlaceChunkHopperListener.isToFilter();
 		sender.sendMessage("");
 		for(int i = 0; i<locCh.length; i++) {

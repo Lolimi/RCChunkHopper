@@ -1,38 +1,28 @@
 package lolimi.chunkHoppers.listeners;
 
-import java.io.File;
-import java.util.Locale;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Hopper;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.Plugin;
 
 import lolimi.chunkHoppers.chunkHoppers.ChunkHopper;
 import lolimi.chunkHoppers.main.ChDataHandler;
 import lolimi.chunkHoppers.main.ChunkHopperUtil;
 import lolimi.chunkHoppers.main.Main;
+import net.brcdev.shopgui.ShopGuiPlusApi;
+import net.brcdev.shopgui.exception.player.PlayerDataNotLoadedException;
 
-public class ItemDropListenerCh implements Listener {
+public class ItemDropListenerChShopGUI implements Listener {
 
 	@EventHandler
 	public void onItemDrop(ItemSpawnEvent event) throws Exception {
-		try {
-			event.getEntity().getItemStack().isSimilar(Main.upgrade1);
-		}catch(NullPointerException e) {
-			return;
-		}
-		if(event.getEntity().getItemStack().isSimilar(Main.upgrade1) || event.getEntity().getItemStack().isSimilar(Main.upgrade2))
-			return;
 		ChunkHopper ch = Main.getPlugin().isInChunkHopperChunk(event.getLocation());
 		if (ch != null) {
 			ItemStack item = event.getEntity().getItemStack();
@@ -46,7 +36,7 @@ public class ItemDropListenerCh implements Listener {
 	}
 
 	public boolean putInCh(ChunkHopper ch, ItemStack item) {
-		if (ch.getLevel() < 1 || ch.getLevel() > 3) {
+		if (ch.getLevel() < 1 && ch.getLevel() > 3) {
 			Bukkit.getConsoleSender().sendMessage("§4There is a §6ChunkHopper §4 in the data file at the location §2"
 					+ ch.getLocation() + "§4, that has an invalid level!");
 			return false;
@@ -155,7 +145,6 @@ public class ItemDropListenerCh implements Listener {
 					return false;
 
 			}
-			Plugin[] plugins = Bukkit.getPluginManager().getPlugins();
 			boolean inFilter = false;
 			boolean inSFilter = false;
 
@@ -173,39 +162,38 @@ public class ItemDropListenerCh implements Listener {
 			}
 
 			if (ch.isSellingWhitelist() && inSFilter) {
-				int i = 0;
-				while (i <= plugins.length) {
-					if (plugins[i].getName().equalsIgnoreCase("essentials")) {
 
-						File file = new File(Bukkit.getPluginManager().getPlugins()[i].getDataFolder() + File.separator
-								+ "worth.yml");
-						FileConfiguration conf = YamlConfiguration.loadConfiguration(file);
-						try {
+				try {
 
-							double price = conf.getDouble(
-									"worth." + item.getType().toString().toLowerCase(Locale.ENGLISH).replace("_", ""))
-									* item.getAmount();
-							if (price <= 0) {
-								if (h.getInventory().firstEmpty() != -1) {
-									h.getInventory().addItem(item);
-									return true;
-								} else {
-									return false;
-								}
-							}
-							ch.addToSold(price);
-							if (player.isOnline()) {
-								Main.getEconomy().depositPlayer(player, price);
-								return true;
-							} else {
-								ChDataHandler.setOfflineSold(ch.getOwnerUUID().toString(), price, false);
-								return true;
-							}
-						} catch (NullPointerException e) {
+					double price = ShopGuiPlusApi.getItemStackPriceSell((Player) player, item);
+
+					if (price <= 0) {
+						if (h.getInventory().firstEmpty() != -1) {
+							h.getInventory().addItem(item);
+							return true;
+						} else {
+							return false;
 						}
 					}
-					i++;
+
+					ch.addToSold(price);
+					if (player.isOnline()) {
+						Main.getEconomy().depositPlayer(player, price);
+					} else {
+						ChDataHandler.setOfflineSold(ch.getOwnerUUID().toString(), price, false);
+						if (h.getInventory().firstEmpty() != -1) {
+							h.getInventory().addItem(item);
+							return true;
+						} else {
+							return false;
+						}
+					}
+					return true;
+				} catch (PlayerDataNotLoadedException e) {
+					return false;
+				} catch (NullPointerException e) {
 				}
+
 				if (h.getInventory().firstEmpty() != -1) {
 					h.getInventory().addItem(item);
 					return true;
@@ -214,38 +202,35 @@ public class ItemDropListenerCh implements Listener {
 				}
 
 			} else if (!ch.isSellingWhitelist() && !inSFilter) {
-				int i = 0;
-				while (i < plugins.length) {
-					if (plugins[i].getName().equalsIgnoreCase("essentials")) {
+				try {
 
-						File file = new File(Bukkit.getPluginManager().getPlugins()[i].getDataFolder() + File.separator
-								+ "worth.yml");
-						FileConfiguration conf = YamlConfiguration.loadConfiguration(file);
-						try {
+					double price = ShopGuiPlusApi.getItemStackPriceSell((Player) player, item);
 
-							double price = conf.getDouble(
-									"worth." + item.getType().toString().toLowerCase(Locale.ENGLISH).replace("_", ""))
-									* item.getAmount();
-							if (price <= 0) {
-								if (h.getInventory().firstEmpty() != -1) {
-									h.getInventory().addItem(item);
-									return true;
-								} else {
-									return false;
-								}	
-							}
-							ch.addToSold(price);
-							if (player.isOnline()) {
-								Main.getEconomy().depositPlayer(player, price);
-								return true;
-							} else {
-								ChDataHandler.setOfflineSold(ch.getOwnerUUID().toString(), price, false);
-								return true;
-							}
-						} catch (NullPointerException e) {
+					if (price <= 0) {
+						if (h.getInventory().firstEmpty() != -1) {
+							h.getInventory().addItem(item);
+							return true;
+						} else {
+							return false;
 						}
 					}
-					i++;
+
+					ch.addToSold(price);
+					if (player.isOnline()) {
+						Main.getEconomy().depositPlayer(player, price);
+					} else {
+						ChDataHandler.setOfflineSold(ch.getOwnerUUID().toString(), price, false);
+						if (h.getInventory().firstEmpty() != -1) {
+							h.getInventory().addItem(item);
+							return true;
+						} else {
+							return false;
+						}
+					}
+					return true;
+				} catch (PlayerDataNotLoadedException e) {
+					return false;
+				} catch (NullPointerException e) {
 				}
 				if (h.getInventory().firstEmpty() != -1) {
 					h.getInventory().addItem(item);

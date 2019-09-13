@@ -3,6 +3,7 @@ package lolimi.chunkHoppers.chunkHoppers;
 import java.io.File;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -180,12 +181,13 @@ public abstract class ChunkHopper {
 	}
 	
 	public void upgrade() {
+		if(!Main.useLevel) Bukkit.broadcastMessage("$4Tried to upgrade...");
 		if(level == 1) {
-			LevelTwo two = new LevelTwo(location, true);
+			LevelTwo two = new LevelTwo(location, true, null);
 			two.save();
 			Main.getPlugin().addChunkHopper(two);
 		}else if(level == 2) {
-			LevelThree three = new LevelThree(location, true);
+			LevelThree three = new LevelThree(location, true, null);
 			three.save();
 			Main.getPlugin().addChunkHopper(three);
 		}

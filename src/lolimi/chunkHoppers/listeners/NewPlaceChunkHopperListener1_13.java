@@ -29,7 +29,7 @@ import lolimi.chunkHoppers.chunkHoppers.LevelTwo;
 import lolimi.chunkHoppers.main.Gui;
 import lolimi.chunkHoppers.main.Main;
 
-public class NewPlaceChunkHopperListener implements Listener {
+public class NewPlaceChunkHopperListener1_13 implements Listener {
 	private static Location[] locCh = new Location[50];
 	private static boolean set = false;
 	private static Location[] settingsLoc = new Location[50];
@@ -48,20 +48,21 @@ public class NewPlaceChunkHopperListener implements Listener {
 					&& placedBlockMeta.getLore().equals(Main.cHLore)) {
 				ChunkHopper chInChunk = Main.getPlugin().isInChunkHopperChunk(e.getBlock().getLocation());
 				if (chInChunk != null) {
-					blockPlacer.sendMessage(
-							Main.prefix + "§cThere is already a §6Chunk Hopper §cin this Chunk, you can't place another one here!");
+					blockPlacer.sendMessage(Main.prefix
+							+ "§cThere is already a §6Chunk Hopper §cin this Chunk, you can't place another one here!");
 					e.setCancelled(true);
 					return false;
 				}
+
 				e.getPlayer().sendMessage(Main.prefix + "§bYou have placed down a §6Chunk Hopper§b!");
-				if(Main.useLevel)
+				if (Main.useLevel)
 					Main.chunkHopper.add(new LevelOne(e.getBlock().getLocation(), e.getPlayer().getUniqueId()));
 				else if(Main.useSell)
 					Main.chunkHopper.add(new LevelThree(e.getBlock().getLocation(), true, e.getPlayer().getUniqueId()));
 				else
 					Main.chunkHopper.add(new LevelTwo(e.getBlock().getLocation(), true, e.getPlayer().getUniqueId()));
 				return true;
-					
+
 			}
 		}
 		return false;
@@ -98,15 +99,15 @@ public class NewPlaceChunkHopperListener implements Listener {
 						inv = Gui.getSettingsTabGui(h.getLocation());
 						String placer = Bukkit.getOfflinePlayer(ch.getOwnerUUID()).getName();
 						if (!placer.equals(e.getPlayer().getName())) {
-							if (!e.getPlayer().hasPermission("rchopper.admin")||e.getPlayer().hasPermission("rchopper.admin")) {
+							if (!e.getPlayer().hasPermission("rchopper.admin")
+									|| e.getPlayer().hasPermission("rchopper.admin")) {
 								e.getPlayer().sendMessage(
 										Main.prefix + "§cYou can only change §6Chunk Hoppers §cplaced by you!");
 							} else {
-								
 								for (int j = 0; j < settingsLoc.length; j++) {
 									if (settingsLoc[j] == null) {
 										settingsLoc[j] = e.getClickedBlock().getLocation();
-										
+
 										e.getClickedBlock().setMetadata("chunkhopper",
 												new FixedMetadataValue(Main.getPlugin(), placer));
 										break;
@@ -119,7 +120,7 @@ public class NewPlaceChunkHopperListener implements Listener {
 							for (int j = 0; j < settingsLoc.length; j++) {
 								if (settingsLoc[j] == null) {
 									settingsLoc[j] = e.getClickedBlock().getLocation();
-									
+
 									e.getClickedBlock().setMetadata("chunkhopper",
 											new FixedMetadataValue(Main.getPlugin(), e.getPlayer().getName()));
 									break;
@@ -128,22 +129,22 @@ public class NewPlaceChunkHopperListener implements Listener {
 							return true;
 						}
 					} else {
-						e.getPlayer()
-								.sendMessage(Main.prefix + "§cBroken §6Chunk Hopper §cdetected, breaking it!");
-								Main.getPlugin().rmvChunkHopper(e.getClickedBlock().getLocation());
+						e.getPlayer().sendMessage(Main.prefix + "§cBroken §6Chunk Hopper §cdetected, breaking it!");
+						Main.getPlugin().rmvChunkHopper(e.getClickedBlock().getLocation());
 
-						e.getClickedBlock().setType(Material.AIR);	
-			
+						e.getClickedBlock().setType(Material.AIR);
 						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "gch " + e.getPlayer().getName() + " 1");
 					}
 				} catch (NullPointerException f) {
 					e.getPlayer().sendMessage(Main.prefix + "§cBroken §6Chunk Hopper §cdetected, breaking it!");
 					Main.getPlugin().rmvChunkHopper(e.getClickedBlock().getLocation());
-					
+
 					e.getClickedBlock().setType(Material.AIR);
-						
+					;
 					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "gch " + e.getPlayer().getName() + " 1");
-				}	
+
+				}
+
 			} catch (NullPointerException f) {
 			}
 		}
@@ -160,7 +161,7 @@ public class NewPlaceChunkHopperListener implements Listener {
 
 	@SuppressWarnings("deprecation")
 	@EventHandler
-	public boolean onSettingsTabClick(InventoryClickEvent e){
+	public boolean onSettingsTabClick(InventoryClickEvent e) {
 		if (e.getView().getTitle().equals(Main.chSettingsInvName)) {
 			ItemStack i = e.getCurrentItem();
 			try {
@@ -177,6 +178,7 @@ public class NewPlaceChunkHopperListener implements Listener {
 								for (int k = 0; k < filterLoc.length; k++) {
 									if (filterLoc[k] == null) {
 										filterLoc[k] = loc;
+										// change = true;
 										break;
 									}
 								}
@@ -185,7 +187,7 @@ public class NewPlaceChunkHopperListener implements Listener {
 							}
 						}
 					}
-				} else if(n.equals(Main.toUpgradeItemName)) {
+				} else if (n.equals(Main.toUpgradeItemName)) {
 					e.setCancelled(true);
 					for (int j = 0; j < settingsLoc.length; j++) {
 						if (!(settingsLoc[j] == null)) {
@@ -193,10 +195,10 @@ public class NewPlaceChunkHopperListener implements Listener {
 									.equals(e.getWhoClicked().getName())) {
 								e.setCancelled(true);
 								ChunkHopper ch = Main.getPlugin().isInChunkHopperChunk(settingsLoc[j]);
-								
-								if(ch.getLevel() == 1) {
-									if(e.getCursor().isSimilar(Main.upgrade1)) {
-										for(int in = e.getCursor().getAmount() - 1; in > 0; in--) {
+
+								if (ch.getLevel() == 1) {
+									if (e.getCursor().isSimilar(Main.upgrade1)) {
+										for (int in = e.getCursor().getAmount() - 1; in > 0; in--) {
 											e.getWhoClicked().getInventory().addItem(Main.upgrade1);
 										}
 										e.setCancelled(true);
@@ -204,57 +206,68 @@ public class NewPlaceChunkHopperListener implements Listener {
 										e.getCursor().setType(Material.AIR);
 										e.getCursor().setAmount(0);
 										Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(), new Runnable() {
-											
+
 											@Override
 											public void run() {
 												e.getWhoClicked().closeInventory();
-												
+
 											}
 										}, 3);
-										
-										e.getWhoClicked().sendMessage(Main.prefix + "§aYou have upgraded your §6Chunk Hopper §ato §clevel " + (ch.getLevel() + 1));
+
+										e.getWhoClicked()
+												.sendMessage(Main.prefix
+														+ "§aYou have upgraded your §6Chunk Hopper §ato §clevel "
+														+ (ch.getLevel() + 1));
 										ch.upgrade();
 										settingsLoc[j] = null;
 										return true;
-									}else {
-										if(e.getCursor().isSimilar(Main.upgrade2))
-											e.getWhoClicked().sendMessage(Main.prefix + "§cYou need the §6Tier 1 §a➜ §6Tier 2 §cupgrade here!");
+									} else {
+										if (e.getCursor().isSimilar(Main.upgrade2))
+											e.getWhoClicked().sendMessage(Main.prefix
+													+ "§cYou need the §6Tier 1 §a➜ §6Tier 2 §cupgrade here!");
 										else
-											e.getWhoClicked().sendMessage(Main.prefix + "§cYou have to drop a §aChunk Hopper upgrade §chere!");
+											e.getWhoClicked().sendMessage(Main.prefix
+													+ "§cYou have to drop a §aChunk Hopper upgrade §chere!");
 										return false;
 									}
-								}else if(ch.getLevel() == 2) {
-									if(e.getCursor().isSimilar(Main.upgrade2)) {
-										for(int in = e.getCursor().getAmount() - 1; in > 0; in--) {
+								} else if (ch.getLevel() == 2) {
+									if (e.getCursor().isSimilar(Main.upgrade2)) {
+										for (int in = e.getCursor().getAmount() - 1; in > 0; in--) {
 											e.getWhoClicked().getInventory().addItem(Main.upgrade2);
 										}
 										e.setCancelled(true);
 										e.setCursor(null);
 										e.getCursor().setType(Material.AIR);
 										e.getCursor().setAmount(0);
-										
+
 										Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(), new Runnable() {
-											
+
 											@Override
 											public void run() {
 												e.getWhoClicked().closeInventory();
-												
+
 											}
 										}, 3);
-										
-										e.getWhoClicked().sendMessage(Main.prefix + "§aYou have upgraded your §6Chunk Hopper §ato §clevel " + (ch.getLevel() + 1));
+
+										e.getWhoClicked()
+												.sendMessage(Main.prefix
+														+ "§aYou have upgraded your §6Chunk Hopper §ato §clevel "
+														+ (ch.getLevel() + 1));
 										ch.upgrade();
 										settingsLoc[j] = null;
 										return true;
-									}else {
-										if(e.getCursor().isSimilar(Main.upgrade1))
-											e.getWhoClicked().sendMessage(Main.prefix + "§cYou need the §6Tier 2 §a➜ §6Tier 3 §cupgrade here!");
+									} else {
+										if (e.getCursor().isSimilar(Main.upgrade1))
+											e.getWhoClicked().sendMessage(Main.prefix
+													+ "§cYou need the §6Tier 2 §a➜ §6Tier 3 §cupgrade here!");
 										else
-											e.getWhoClicked().sendMessage(Main.prefix + "§cYou have to drop a §aChunk Hopper upgrade §chere!");
+											e.getWhoClicked().sendMessage(Main.prefix
+													+ "§cYou have to drop a §aChunk Hopper upgrade §chere!");
 										return false;
 									}
-								}else {
-									e.getWhoClicked().sendMessage(Main.prefix + "§4Some error occured (ERROR 211, please report!)");
+								} else {
+									e.getWhoClicked().sendMessage(
+											Main.prefix + "§4Some error occured (ERROR 211, please report!)");
 								}
 							}
 						}
@@ -268,7 +281,7 @@ public class NewPlaceChunkHopperListener implements Listener {
 								ChunkHopper ch = Main.getPlugin().isInChunkHopperChunk(settingsLoc[j]);
 
 								ch.remove();
-								
+
 								settingsLoc[j].getBlock().setType(Material.AIR);
 
 								e.setCancelled(true);
@@ -279,8 +292,7 @@ public class NewPlaceChunkHopperListener implements Listener {
 									if(ch.getLevel() == 3)
 										e.getWhoClicked().getInventory().addItem(Main.upgrade2);
 								}
-								e.getWhoClicked()
-										.sendMessage(Main.prefix + "§cYou have broken the §6Chunk Hopper§c!");
+								e.getWhoClicked().sendMessage(Main.prefix + "§cYou have broken the §6Chunk Hopper§c!");
 								ItemStack item = new ItemStack(Material.HOPPER);
 								ItemMeta m = item.getItemMeta();
 								m.setDisplayName(Main.cHDisplayName);
@@ -317,27 +329,28 @@ public class NewPlaceChunkHopperListener implements Listener {
 			} catch (NullPointerException f) {
 				return false;
 			}
-			
 		}
 		return false;
 	}
-	
+
 	@EventHandler
 	public void onSettingsTabClose(InventoryCloseEvent e) {
-		if(!e.getView().getTitle().equals(Main.chSettingsInvName)) return;
-		for(int i = 0; i<settingsLoc.length;i++) {
-			if(settingsLoc[i]!=null&&e.getPlayer().getName().equals(settingsLoc[i].getBlock().getMetadata("chunkhopper").get(0).asString())) {
+		if (!e.getView().getTitle().equals(Main.chSettingsInvName))
+			return;
+		for (int i = 0; i < settingsLoc.length; i++) {
+			if (settingsLoc[i] != null && e.getPlayer().getName()
+					.equals(settingsLoc[i].getBlock().getMetadata("chunkhopper").get(0).asString())) {
 				settingsLoc[i] = null;
 				break;
 			}
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	@EventHandler
-	public boolean onFilterTabClick(InventoryClickEvent e){
-		
-		if(e.getCurrentItem() == null || e.getCurrentItem().getType().equals(Material.AIR)) return false;
+	public boolean onFilterTabClick(InventoryClickEvent e) {
+
+		if (e.getCurrentItem() == null || e.getCurrentItem().getType().equals(Material.AIR))
+			return false;
 		if (e.getView().getTitle().equals(Main.normalFilterInvName)) {
 			for (int i = 0; i < filterLoc.length; i++) {
 				if (!(filterLoc[i] == null)) {
@@ -346,7 +359,7 @@ public class NewPlaceChunkHopperListener implements Listener {
 						ChunkHopper ch = Main.getPlugin().isInChunkHopperChunk(filterLoc[i]);
 						if (e.getCurrentItem().getType().toString().equals("AIR"))
 							return false;
-						if (e.getRawSlot()<=53) {
+						if (e.getRawSlot() <= 53) {
 							if (e.getSlot() > 8) {
 								ch.rmvFromNFilter(e.getCurrentItem(), e.getSlot());
 								stillSettingUpFilter = true;
@@ -355,21 +368,20 @@ public class NewPlaceChunkHopperListener implements Listener {
 								e.getWhoClicked().openInventory(e.getInventory());
 							} else if (e.getSlot() == 7) {
 								ch.changeNWhitelist();
-								
+
 								e.setCancelled(true);
-								if (e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.GRAY+ "Whitelist")) {
+								if (e.getCurrentItem().getItemMeta().getDisplayName()
+										.equals(ChatColor.GRAY + "Whitelist")) {
 									ItemStack item = e.getCurrentItem().clone();
 									ItemMeta m = item.getItemMeta();
 									m.setDisplayName(ChatColor.DARK_GRAY + "Blacklist");
 									List<String> l = Arrays.asList(
-											ChatColor.DARK_GRAY + "Picks up all items but the ones set up in this filter",
+											ChatColor.DARK_GRAY
+													+ "Picks up all items but the ones set up in this filter",
 											ChatColor.DARK_GRAY + "Click to change");
 									m.setLore(l);
 									item.setItemMeta(m);
-									if(Main.legacy)
-										item.setDurability((short) 15); 
-									else
-										item.setType(Material.BLACK_TERRACOTTA);
+									item.setType(Material.BLACK_TERRACOTTA);
 									e.setCurrentItem(item);
 								} else {
 									ItemStack item = e.getCurrentItem();
@@ -380,16 +392,14 @@ public class NewPlaceChunkHopperListener implements Listener {
 											ChatColor.GRAY + "Click to change");
 									m.setLore(l4);
 									item.setItemMeta(m);
-									if(Main.legacy)
-										item.setDurability((short) 0); 
-									else
-										item.setType(Material.WHITE_TERRACOTTA);
+									item.setType(Material.WHITE_TERRACOTTA);
 									e.setCurrentItem(item);
 								}
 							} else
 								e.setCancelled(true);
-						} else if (e.getCurrentItem() != null && e.getClickedInventory() != null && e.getRawSlot()>53) {
-								
+						} else if (e.getCurrentItem() != null && e.getClickedInventory() != null
+								&& e.getRawSlot() > 53) {
+
 							ItemStack[] filters = ch.getNormalFilter();
 							int k = 0;
 							while (filters.length >= k + 1) {
@@ -411,7 +421,6 @@ public class NewPlaceChunkHopperListener implements Listener {
 									e.getWhoClicked().openInventory(e.getInventory());
 									break;
 								}
-
 							}
 						}
 					}
@@ -440,10 +449,10 @@ public class NewPlaceChunkHopperListener implements Listener {
 		return false;
 	}
 
-	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onSFilterClick(InventoryClickEvent e) {
-		if(e.getCurrentItem() == null || e.getCurrentItem().getType().equals(Material.AIR)) return;
+		if (e.getCurrentItem() == null || e.getCurrentItem().getType().equals(Material.AIR))
+			return;
 		if (e.getView().getTitle().equals(ChatColor.DARK_AQUA + "Setup your Selling Filter here")) {
 			for (int i = 0; i < filterLoc.length; i++) {
 				if (!(filterLoc[i] == null)) {
@@ -452,30 +461,30 @@ public class NewPlaceChunkHopperListener implements Listener {
 						ChunkHopper ch = Main.getPlugin().isInChunkHopperChunk(filterLoc[i]);
 						if (e.getCurrentItem().getType().toString().equals("AIR"))
 							return;
-						if (e.getRawSlot()<=53) {
+						if (e.getRawSlot() <= 53) {
 							if (e.getSlot() > 8) {
 								ch.rmvFromSFilter(e.getCurrentItem(), e.getSlot());
 								stillSettingUpFilter = true;
 								e.setCancelled(true);
+								e.getWhoClicked().closeInventory();
 								e.getView().getTopInventory().remove(e.getCurrentItem().getType());
 								e.getWhoClicked().openInventory(e.getInventory());
 							} else if (e.getSlot() == 7) {
 								ch.changeSWhitelist();
-								
+
 								e.setCancelled(true);
-								if (e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.GRAY+ "Whitelist")) {
+								if (e.getCurrentItem().getItemMeta().getDisplayName()
+										.equals(ChatColor.GRAY + "Whitelist")) {
 									ItemStack item = e.getCurrentItem().clone();
 									ItemMeta m = item.getItemMeta();
 									m.setDisplayName(ChatColor.DARK_GRAY + "Blacklist");
 									List<String> l = Arrays.asList(
-											ChatColor.DARK_GRAY + "Picks up all items but the ones set up in this filter",
+											ChatColor.DARK_GRAY
+													+ "Picks up all items but the ones set up in this filter",
 											ChatColor.DARK_GRAY + "Click to change");
 									m.setLore(l);
 									item.setItemMeta(m);
-									if(Main.legacy)
-										item.setDurability((short) 15); 
-									else
-										item.setType(Material.BLACK_TERRACOTTA);
+									item.setType(Material.BLACK_TERRACOTTA);
 									e.setCurrentItem(item);
 								} else {
 									ItemStack item = e.getCurrentItem();
@@ -486,16 +495,14 @@ public class NewPlaceChunkHopperListener implements Listener {
 											ChatColor.GRAY + "Click to change");
 									m.setLore(l4);
 									item.setItemMeta(m);
-									if(Main.legacy)
-										item.setDurability((short) 0);
-									else
-										item.setType(Material.WHITE_TERRACOTTA);
+									item.setType(Material.WHITE_TERRACOTTA);
 									e.setCurrentItem(item);
 								}
 							} else
 								e.setCancelled(true);
-						} else if (e.getCurrentItem() != null && e.getClickedInventory() != null && e.getRawSlot()>53) {
-								
+						} else if (e.getCurrentItem() != null && e.getClickedInventory() != null
+								&& e.getRawSlot() > 53) {
+
 							ItemStack[] filters = ch.getSellingFilter();
 							int k = 0;
 							while (filters.length >= k + 1) {
@@ -512,6 +519,7 @@ public class NewPlaceChunkHopperListener implements Listener {
 								try {
 									e.getView().getTopInventory().getItem(j).getItemMeta();
 								} catch (Exception f) {
+									f.printStackTrace();
 									stillSettingUpFilter = true;
 									e.getInventory().setItem(j, new ItemStack(e.getCurrentItem().getType()));
 									e.getWhoClicked().openInventory(e.getInventory());
@@ -545,5 +553,5 @@ public class NewPlaceChunkHopperListener implements Listener {
 		}
 		return false;
 	}
-	
+
 }

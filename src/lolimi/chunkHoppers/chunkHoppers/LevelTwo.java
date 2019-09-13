@@ -14,7 +14,7 @@ import lolimi.chunkHoppers.main.Main;
 
 public class LevelTwo extends ChunkHopper {
 
-	public LevelTwo(Location loc, boolean isNew) {
+	public LevelTwo(Location loc, boolean isNew, UUID uid) {
 		removed = false;
 		changed = false;
 		level = 2;
@@ -46,44 +46,77 @@ public class LevelTwo extends ChunkHopper {
 				this.normalFilter[i] = new ItemStack(Material.getMaterial(conf.getString("NormalFilter." + i)));
 			}
 		}else {
-			if(Main.getPlugin().isInChunkHopperChunk(loc).getLevel() != 1) return;
-			LevelOne old = (LevelOne) Main.getPlugin().isInChunkHopperChunk(loc);
-			file = old.getFile();
-			file = new File(file.getPath().replace("level1.yml", "level2.yml"));
-			conf = YamlConfiguration.loadConfiguration(file);
-			
-			
-			try {
-				file.createNewFile();
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
-			
-			location = old.getLocation();
-			chunkX = old.getChunkX();
-			chunkZ = old.getChunkZ();
-			ownerName = old.getOwnerName();
-			ownerUUID = old.getOwnerUUID();
-			normalWhitelist = false;
-			for (int i = 0; i < 45; i++) {
-				this.normalFilter[i] = new ItemStack(Material.AIR);
-			}
-			
-			conf.set("Owner.Name", Bukkit.getOfflinePlayer(ownerUUID).getName());
-			conf.set("Owner.UUID", ownerUUID.toString());
+			if(uid != null) {
+				if(Main.getPlugin().isInChunkHopperChunk(loc).getLevel() != 1) return;
+				LevelOne old = (LevelOne) Main.getPlugin().isInChunkHopperChunk(loc);
+				file = old.getFile();
+				file = new File(file.getPath().replace("level1.yml", "level2.yml"));
+				conf = YamlConfiguration.loadConfiguration(file);
+				
+				
+				try {
+					file.createNewFile();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+				
+				location = old.getLocation();
+				chunkX = old.getChunkX();
+				chunkZ = old.getChunkZ();
+				ownerName = old.getOwnerName();
+				ownerUUID = old.getOwnerUUID();
+				normalWhitelist = false;
+				
+				conf.set("Owner.Name", Bukkit.getOfflinePlayer(ownerUUID).getName());
+				conf.set("Owner.UUID", ownerUUID.toString());
 
-			conf.set("NormalWhitelist", String.valueOf(normalWhitelist));
+				conf.set("NormalWhitelist", String.valueOf(normalWhitelist));
 
-			for (int i = 0; i < 9 * 5; i++) {
-				conf.set("NormalFilter." + i, "AIR");
-				this.normalFilter[i] = new ItemStack(Material.AIR);
+				for (int i = 0; i < 9 * 5; i++) {
+					conf.set("NormalFilter." + i, "AIR");
+					this.normalFilter[i] = new ItemStack(Material.AIR);
+				}
+				try {
+					conf.save(file);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				old.remove();
+			}else {
+				file = new File(Main.getPlugin().getDataFolder().getPath() + File.separator + "ChunkHoppers"
+						+ File.separator + loc.getWorld().getName() + ";" + loc.getBlockX() + ";" + loc.getBlockY() + ";"
+						+ loc.getBlockZ() + ";level2.yml");
+
+				if (file.exists())
+					return;
+				try {
+					file.createNewFile();
+				} catch (IOException e) {
+				}
+				conf = YamlConfiguration.loadConfiguration(file);
+				location = loc.clone();
+				chunkX = this.location.getChunk().getX();
+				chunkZ = this.location.getChunk().getZ();
+				
+				ownerName = Bukkit.getOfflinePlayer(uid).getName();
+				ownerUUID = uid;
+				
+				normalWhitelist = false;
+				conf.set("NormalWhitelist", String.valueOf(normalWhitelist));
+				for (int i = 0; i < 45; i++) {
+					this.normalFilter[i] = new ItemStack(Material.AIR);
+					conf.set("NormalFilter." + i, "AIR");
+				}
+				
+				conf.set("Owner.Name", Bukkit.getOfflinePlayer(ownerUUID).getName());
+				conf.set("Owner.UUID", ownerUUID.toString());
+				
+				try {
+					conf.save(file);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
-			try {
-				conf.save(file);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			old.remove();
 		}
 	}
 

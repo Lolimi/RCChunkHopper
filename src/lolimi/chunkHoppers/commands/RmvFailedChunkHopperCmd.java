@@ -21,13 +21,13 @@ public class RmvFailedChunkHopperCmd implements CommandExecutor {
 				if (p.hasPermission("chunkHopper.removeFromData")||p.hasPermission("rchoppers.admin")) {
 					Main.getPlugin().rmvChunkHopper(ch.getLocation());
 					ch.remove();
-					p.sendMessage("§3[§6RCHoppers§3]"+ChatColor.DARK_GREEN+"You have successfully removed the §6Chunk Hopper §2at §b"+ch.getLocation()+"§2!");
+					p.sendMessage(Main.prefix+ChatColor.DARK_GREEN+"You have successfully removed the §6Chunk Hopper §2at §b"+ch.getLocation()+"§2!");
 						
 				} else {
 					p.sendMessage(ChatColor.DARK_RED + "You don't have permission to execute this command!");
 				}
 			} else {
-				p.sendMessage("§3[§6RCHoppers§3] §cThere is no Chunk Hopper in this chunk");
+				p.sendMessage(Main.prefix + "§cThere is no Chunk Hopper in this chunk");
 			}
 		}
 		return false;

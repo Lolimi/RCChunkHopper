@@ -1,6 +1,10 @@
 package lolimi.chunkHoppers.main;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -9,6 +13,7 @@ import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.PluginManager;
@@ -27,10 +32,14 @@ import lolimi.chunkHoppers.commands.RmvFailedChunkHopperCmd;
 import lolimi.chunkHoppers.commands.StaticVariableDebug;
 import lolimi.chunkHoppers.listeners.BreakChunkHopperListener;
 import lolimi.chunkHoppers.listeners.ItemDropListenerCh;
+import lolimi.chunkHoppers.listeners.ItemDropListenerChShopGUI;
 import lolimi.chunkHoppers.listeners.NewPlaceChunkHopperListener;
+import lolimi.chunkHoppers.listeners.NewPlaceChunkHopperListener1_13;
 import net.milkbowl.vault.economy.Economy;
 
 public class Main extends JavaPlugin {
+	
+	public static String prefix;
 
 	private static Economy econ = null;
 
@@ -38,38 +47,145 @@ public class Main extends JavaPlugin {
 	private PluginManager pluginManager;
 	public static Logger log;
 
-	public static final String cHDisplayName = "§6§lChunk Hopper";
-	public static final List<String> cHLore = Arrays.asList("§bThis is a Chunk Hopper",
-			"§bIt picks up all the items in a chunk!");
+	public static String cHDisplayName;
+	public static List<String> cHLore;
 	
-	private final String 	upgradeName = "§aChunk Hopper upgrade";
-	private final List<String> 	upgrade1Lore = Arrays.asList("§6Tier 1 §a➜ §6Tier 2"),
-								upgrade2Lore = Arrays.asList("§6Tier 2 §a➜ §6Tier 3");
+	public static String 	chSettingsInvName,
+							normalFilterInvName,
+							sellingFilterInvName,
+							
+							toUpgradeItemName,
+							toFilterItemName,
+							toSellingFilterItemName,
+							toBreakItemName,
+							soldItemName,
+							explainBookItemNameNormal,
+							explainBookItemNameSelling,
+							explainEmeraldItemName,
+							explainRedstoneItemName;
+							
+	public static List<String> 	explainBookItemLoreNormal,
+								explainBookItemLoreSelling,
+								explainEmeraldItemLore,
+								explainRedstoneItemLore,
+								whiteListItemLoreNormal,
+								blackListItemLoreNormal,
+								whiteListItemLoreSelling,
+								blackListItemLoreSelling;
+	
+	private String 	upgradeName1,
+					upgradeName2;;
+	private List<String> 	upgrade1Lore,
+							upgrade2Lore;
 	
 	public static ItemStack upgrade1,
 							upgrade2;
-								
+	
+	public static boolean useLevel;		
+	public static boolean useSell;
 
 	public static ArrayList<ChunkHopper> chunkHopper = new ArrayList<ChunkHopper>();
+	
+	public static boolean hasShopGuiPlus;
+	public static String version;
+	public static boolean legacy;
 
 	@Override
 	public void onEnable() {
 		plugin = this;
+		getVersion();
+		initConfig();
 		init();
 		initCommands();
-		initItems();
+		if(useLevel)
+			initItems();
+	}
+	
+	private void initConfig() throws NullPointerException{
+		File f = new File(getDataFolder() + File.separator + "config.yml");
+		if (!f.exists()) {
+			try {
+				f.createNewFile();
+				OutputStream writer = new FileOutputStream(f);
+				InputStream out = this.getResource("config.yml");
+				byte[] linebuffer = new byte[out.available()];
+				out.read(linebuffer);
+				writer.write(linebuffer);
+				writer.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		YamlConfiguration conf = YamlConfiguration.loadConfiguration(f);
+		
+		prefix = conf.getString("Prefix");
+		prefix += new String(" ");
+		
+		cHDisplayName = conf.getString("ChunkHopper.Name");
+		cHLore = Arrays.asList(conf.getString("ChunkHopper.Lore").split(","));
+		
+		useLevel = conf.getBoolean("LevelSystem");
+		useSell = conf.getBoolean("UseSellSystem");
+		
+		if(useLevel) {
+			upgradeName1 = conf.getString("Upgrade.1.Name");
+			upgradeName2 = conf.getString("Upgrade.2.Name");
+			upgrade1Lore = Arrays.asList(conf.getString("Upgrade.1.Lore").split(","));
+			upgrade2Lore = Arrays.asList(conf.getString("Upgrade.2.Lore").split(","));
+		}
+		
+		chSettingsInvName = conf.getString("SettingsGUI");
+		normalFilterInvName = conf.getString("NormalFilterGUI");
+		sellingFilterInvName = conf.getString("SellingFilterGUI");
+		
+		toUpgradeItemName = conf.getString("UpgradeHopperItemName");
+		toFilterItemName = conf.getString("OpenNormalFilterItemName");
+		toSellingFilterItemName = conf.getString("OpenSellingFilterItemName");
+		toBreakItemName = conf.getString("BreakHopperItemName");
+		soldItemName = conf.getString("SoldItemName");
+		
+		explainBookItemNameNormal = conf.getString("Explain.Book.NormalFilter.Name");
+		explainBookItemLoreNormal = Arrays.asList(conf.getString("Explain.Book.NormalFilter.Lore").split(","));
+		explainBookItemNameSelling = conf.getString("Explain.Book.SellingFilter.Name");
+		explainBookItemLoreSelling = Arrays.asList(conf.getString("Explain.Book.SellingFilter.Lore").split(","));
+		
+		explainEmeraldItemName = conf.getString("Explain.Emerald.Name");
+		explainEmeraldItemLore = Arrays.asList(conf.getString("Explain.Emerald.Lore").split(","));
+		explainRedstoneItemName = conf.getString("Explain.Redstone.Name");
+		explainRedstoneItemLore = Arrays.asList(conf.getString("Explain.Redstone.Lore").split(","));
+		
+		blackListItemLoreNormal = Arrays.asList(conf.getString("BlacklistLore.NormalFilter").split(","));
+		blackListItemLoreSelling = Arrays.asList(conf.getString("BlacklistLore.SellingFilter").split(","));
+		whiteListItemLoreNormal = Arrays.asList(conf.getString("WhitelistLore.NormalFilter").split(","));
+		whiteListItemLoreSelling = Arrays.asList(conf.getString("WhitelistLore.SellingFilter").split(","));
 	}
 
 	private void init() {
+		
 		pluginManager = Bukkit.getPluginManager();
 		log = Bukkit.getLogger();
-
-		if (!setupEconomy() || getServer().getPluginManager().getPlugin("Essentials") == null) {
-			log.info("Shutting down: plugins Vault and/or Essentials not installed!");
-			//pluginManager.disablePlugin(this);
-			return;
+		
+		if(useSell) {
+			if(getServer().getPluginManager().getPlugin("ShopGUIPlus") != null)
+				hasShopGuiPlus = true;
+			else {
+				hasShopGuiPlus = false;
+				Bukkit.getConsoleSender().sendMessage("§4ShopGUIPlus is not installed! Please put your prices in the essentials worth file!");
+			}
+			if(!hasShopGuiPlus && getServer().getPluginManager().getPlugin("Essentials") == null) {
+				log.info("Shutting down: plugins Essentials and ShopGUIPlus not installed! You have to install at least one of them!");
+				pluginManager.disablePlugin(this);
+			}
+			
+			if (!setupEconomy() ) {
+				log.info("Shutting down: plugin Vault not installed!");
+				pluginManager.disablePlugin(this);
+				return;
+			}
+		}else {
+			log.info("Not using sell option!");
 		}
-
+		
 		File pluginFile = this.getDataFolder();
 		pluginFile.mkdir();
 		File directory = new File(this.getDataFolder().getPath() + File.separator + "ChunkHoppers");
@@ -99,15 +215,16 @@ public class Main extends JavaPlugin {
 						}else if(chFileNames[i].contains("level2")) {
 							chunkHopper.add(new LevelTwo(new Location(Bukkit.getWorld(split[0]),
 									Double.parseDouble(split[1]), Double.parseDouble(split[2]),
-									Double.parseDouble(split[3].replace(".yml", ""))), false));
-						}else if(chFileNames[i].contains("level3")) {
+									Double.parseDouble(split[3].replace(".yml", ""))), false, null));
+						}else if(chFileNames[i].contains("level3") && useSell) {
 							chunkHopper.add(new LevelThree(new Location(Bukkit.getWorld(split[0]),
 									Double.parseDouble(split[1]), Double.parseDouble(split[2]),
-									Double.parseDouble(split[3].replace(".yml", ""))), false));
+									Double.parseDouble(split[3].replace(".yml", ""))), false, null));
 						}
 					}
 						
 					Bukkit.broadcastMessage("§4Chunk Hoppers have been loaded");
+					Bukkit.getConsoleSender().sendMessage("§bMinecraft version: §3"+version);
 
 				}
 			}
@@ -130,12 +247,19 @@ public class Main extends JavaPlugin {
 		getCommand("gch").setExecutor(new GetChunkHopperCmd());
 		getCommand("rmvch").setExecutor(new RmvFailedChunkHopperCmd());
 		getCommand("rchdebug").setExecutor(new StaticVariableDebug());
-		getCommand("gu1").setExecutor(new GetUpgradeOneCmd());
-		getCommand("gu2").setExecutor(new GetUpgradeTwoCmd());
-
+		if(useLevel) {
+			getCommand("gu1").setExecutor(new GetUpgradeOneCmd());
+			getCommand("gu2").setExecutor(new GetUpgradeTwoCmd());
+		}
 		pluginManager.registerEvents(new BreakChunkHopperListener(), plugin);
-		pluginManager.registerEvents(new ItemDropListenerCh(), plugin);
-		pluginManager.registerEvents(new NewPlaceChunkHopperListener(), plugin);
+		if(!hasShopGuiPlus)
+			pluginManager.registerEvents(new ItemDropListenerCh(), plugin);
+		else
+			pluginManager.registerEvents(new ItemDropListenerChShopGUI(), this);
+		if(version.equals("v1_13_R2"))
+			pluginManager.registerEvents(new NewPlaceChunkHopperListener1_13(), plugin);
+		else
+			pluginManager.registerEvents(new NewPlaceChunkHopperListener(), this);
 	}
 	
 	private void initItems() {
@@ -144,13 +268,28 @@ public class Main extends JavaPlugin {
 		
 		ItemMeta 	m1 = upgrade1.getItemMeta(),
 					m2 = upgrade1.getItemMeta();
-		m1.setDisplayName(upgradeName);
-		m2.setDisplayName(upgradeName);
+		m1.setDisplayName(upgradeName1);
+		m2.setDisplayName(upgradeName2);
 		m1.setLore(upgrade1Lore);
 		m2.setLore(upgrade2Lore);
 		
 		upgrade1.setItemMeta(m1);
 		upgrade2.setItemMeta(m2);
+	}
+	
+	private void getVersion() {
+		String a = this.getServer().getClass().getPackage().getName();
+		version = a.substring(a.lastIndexOf('.') + 1);
+		
+		Bukkit.broadcastMessage(version);
+		
+		
+		if(version.contains("1_13")|| version.contains("1_14")) {
+			legacy = false;
+		} else {
+			legacy = true;
+		}
+		
 	}
 
 	public void onDisable() {
