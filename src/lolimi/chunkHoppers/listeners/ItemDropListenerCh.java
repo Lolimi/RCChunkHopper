@@ -1,6 +1,5 @@
 package lolimi.chunkHoppers.listeners;
 
-import java.io.File;
 import java.util.Locale;
 
 import org.bukkit.Bukkit;
@@ -10,12 +9,10 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Hopper;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.Plugin;
 
 import lolimi.chunkHoppers.chunkHoppers.ChunkHopper;
 import lolimi.chunkHoppers.main.ChDataHandler;
@@ -28,10 +25,11 @@ public class ItemDropListenerCh implements Listener {
 	public void onItemDrop(ItemSpawnEvent event) throws Exception {
 		try {
 			event.getEntity().getItemStack().isSimilar(Main.upgrade1);
-		}catch(NullPointerException e) {
+		} catch (NullPointerException e) {
 			return;
 		}
-		if(event.getEntity().getItemStack().isSimilar(Main.upgrade1) || event.getEntity().getItemStack().isSimilar(Main.upgrade2))
+		if (event.getEntity().getItemStack().isSimilar(Main.upgrade1)
+				|| event.getEntity().getItemStack().isSimilar(Main.upgrade2))
 			return;
 		ChunkHopper ch = Main.getPlugin().isInChunkHopperChunk(event.getLocation());
 		if (ch != null) {
@@ -89,6 +87,8 @@ public class ItemDropListenerCh implements Listener {
 
 //level 3
 		} else {
+			if (!Main.useSell)
+				return false;
 			OfflinePlayer player = Bukkit.getOfflinePlayer(ch.getOwnerUUID());
 			if (!player.isOnline()) {
 				boolean inFilter = false;
@@ -155,7 +155,6 @@ public class ItemDropListenerCh implements Listener {
 					return false;
 
 			}
-			Plugin[] plugins = Bukkit.getPluginManager().getPlugins();
 			boolean inFilter = false;
 			boolean inSFilter = false;
 
@@ -173,39 +172,31 @@ public class ItemDropListenerCh implements Listener {
 			}
 
 			if (ch.isSellingWhitelist() && inSFilter) {
-				int i = 0;
-				while (i <= plugins.length) {
-					if (plugins[i].getName().equalsIgnoreCase("essentials")) {
+				FileConfiguration conf = Main.getSellConf();
+				try {
 
-						File file = new File(Bukkit.getPluginManager().getPlugins()[i].getDataFolder() + File.separator
-								+ "worth.yml");
-						FileConfiguration conf = YamlConfiguration.loadConfiguration(file);
-						try {
-
-							double price = conf.getDouble(
-									"worth." + item.getType().toString().toLowerCase(Locale.ENGLISH).replace("_", ""))
-									* item.getAmount();
-							if (price <= 0) {
-								if (h.getInventory().firstEmpty() != -1) {
-									h.getInventory().addItem(item);
-									return true;
-								} else {
-									return false;
-								}
-							}
-							ch.addToSold(price);
-							if (player.isOnline()) {
-								Main.getEconomy().depositPlayer(player, price);
-								return true;
-							} else {
-								ChDataHandler.setOfflineSold(ch.getOwnerUUID().toString(), price, false);
-								return true;
-							}
-						} catch (NullPointerException e) {
+					double price = conf.getDouble(
+							"worth." + item.getType().toString().toLowerCase(Locale.ENGLISH).replace("_", ""))
+							* item.getAmount();
+					if (price <= 0) {
+						if (h.getInventory().firstEmpty() != -1) {
+							h.getInventory().addItem(item);
+							return true;
+						} else {
+							return false;
 						}
 					}
-					i++;
+					ch.addToSold(price);
+					if (player.isOnline()) {
+						Main.getEconomy().depositPlayer(player, price);
+						return true;
+					} else {
+						ChDataHandler.setOfflineSold(ch.getOwnerUUID().toString(), price, false);
+						return true;
+					}
+				} catch (NullPointerException e) {
 				}
+
 				if (h.getInventory().firstEmpty() != -1) {
 					h.getInventory().addItem(item);
 					return true;
@@ -214,38 +205,30 @@ public class ItemDropListenerCh implements Listener {
 				}
 
 			} else if (!ch.isSellingWhitelist() && !inSFilter) {
-				int i = 0;
-				while (i < plugins.length) {
-					if (plugins[i].getName().equalsIgnoreCase("essentials")) {
 
-						File file = new File(Bukkit.getPluginManager().getPlugins()[i].getDataFolder() + File.separator
-								+ "worth.yml");
-						FileConfiguration conf = YamlConfiguration.loadConfiguration(file);
-						try {
+				FileConfiguration conf = Main.getSellConf();
+				try {
 
-							double price = conf.getDouble(
-									"worth." + item.getType().toString().toLowerCase(Locale.ENGLISH).replace("_", ""))
-									* item.getAmount();
-							if (price <= 0) {
-								if (h.getInventory().firstEmpty() != -1) {
-									h.getInventory().addItem(item);
-									return true;
-								} else {
-									return false;
-								}	
-							}
-							ch.addToSold(price);
-							if (player.isOnline()) {
-								Main.getEconomy().depositPlayer(player, price);
-								return true;
-							} else {
-								ChDataHandler.setOfflineSold(ch.getOwnerUUID().toString(), price, false);
-								return true;
-							}
-						} catch (NullPointerException e) {
+					double price = conf.getDouble(
+							"worth." + item.getType().toString().toLowerCase(Locale.ENGLISH).replace("_", ""))
+							* item.getAmount();
+					if (price <= 0) {
+						if (h.getInventory().firstEmpty() != -1) {
+							h.getInventory().addItem(item);
+							return true;
+						} else {
+							return false;
 						}
 					}
-					i++;
+					ch.addToSold(price);
+					if (player.isOnline()) {
+						Main.getEconomy().depositPlayer(player, price);
+						return true;
+					} else {
+						ChDataHandler.setOfflineSold(ch.getOwnerUUID().toString(), price, false);
+						return true;
+					}
+				} catch (NullPointerException e) {
 				}
 				if (h.getInventory().firstEmpty() != -1) {
 					h.getInventory().addItem(item);

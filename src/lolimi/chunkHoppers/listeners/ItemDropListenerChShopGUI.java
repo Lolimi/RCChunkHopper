@@ -79,6 +79,8 @@ public class ItemDropListenerChShopGUI implements Listener {
 
 //level 3
 		} else {
+			if(!Main.useSell)
+				return false;
 			OfflinePlayer player = Bukkit.getOfflinePlayer(ch.getOwnerUUID());
 			if (!player.isOnline()) {
 				boolean inFilter = false;

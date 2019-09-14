@@ -12,7 +12,11 @@
 #The text that comes up before any message in chat
 Prefix: §3[§6RCHoppers§3] 
 
+#The line on /rch which tells you how to get a Chunk Hopper
+rchHelp: §3You can buy all types of §6RCHoppers §3in the token shop
+
 #Seperate lines in the lore by a comma (,)
+
 ChunkHopper:
    Name: §6§lChunk Hopper
    Lore: §bThis is a Chunk Hopper,§bIt picks up all the items in a chunk!
@@ -38,15 +42,19 @@ LevelSystem: true
 #If you don't want the sell system (disable tier 3 Chunk Hopper), set this to false
 UseSellSystem: true
 
+
 #Inventory names for the different GUIs
 #Can't be longer than 32 characters (color codes included) for some legacy versions
 #Please tell me if you know from which version on it can be longer ;)
+
 SettingsGUI: §3Your Chunk Hopper Settings
 NormalFilterGUI: §3Set up your filter here
 SellingFilterGUI: §3Setup your Selling Filter here
 
+
 #Item names and lores in the Chunk Hopper settings GUI 
 #Seperate lines in the lore by a comma (,)
+
 UpgradeHopperItemName: §aClick here to upgrade this §6RCChunkHopper
 OpenNormalFilterItemName: §3Click here to set up a filter for what items should be picked up
 OpenSellingFilterItemName: §3Click here to set up a filter for what items should be sold
@@ -74,5 +82,40 @@ WhitelistLore:
 BlacklistLore:
    NormalFilter: §8Picks up all items but the ones set up in this filter,§8Click to change
    SellingFilter: §8Sells all items but the ones set up in this filter,§8Click to change
+   
+   
+#Here you can set default filters if you want
+
+UseDefaultFilters: false
+
+DefaultFilters:
+   Normal:
+      Whitelist: false
+      1: EMERALD
+      2: COAL
+      3: IRON_ORE
+      4: GOLD_ORE
+      5: REDSTONE
+      6: LAPIS_LAZULI
+      7: DIAMOND
+      8: CACTUS
+      9: IRON_INGOT
+   Selling:
+      Whitelist: false
+      1: COBBLESTONE
+      2: COAL
+      3: IRON_INGOT
+      4: GOLD_INGOT
+      5: REDSTONE
+      6: LAPIS_LAZULI
+      7: DIAMOND
+      8: EMERALD
+      9: CACTUS
+      10: ROTTEN_FLESH
+      11: GUNPOWDER
+      12: BONE
+      13: ARROW
+      14: STRING
+      15: SPIDER_EYE
 
 

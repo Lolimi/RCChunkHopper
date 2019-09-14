@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -24,6 +25,7 @@ import lolimi.chunkHoppers.chunkHoppers.ChunkHopper;
 import lolimi.chunkHoppers.chunkHoppers.LevelOne;
 import lolimi.chunkHoppers.chunkHoppers.LevelThree;
 import lolimi.chunkHoppers.chunkHoppers.LevelTwo;
+import lolimi.chunkHoppers.commands.CommandTab;
 import lolimi.chunkHoppers.commands.GetChunkHopperCmd;
 import lolimi.chunkHoppers.commands.GetUpgradeOneCmd;
 import lolimi.chunkHoppers.commands.GetUpgradeTwoCmd;
@@ -39,9 +41,12 @@ import net.milkbowl.vault.economy.Economy;
 
 public class Main extends JavaPlugin {
 	
+	private static FileConfiguration sellConf;
+	
 	public static String prefix;
 
 	private static Economy econ = null;
+	private static boolean economySetup;
 
 	private static Main plugin;
 	private PluginManager pluginManager;
@@ -73,16 +78,22 @@ public class Main extends JavaPlugin {
 								whiteListItemLoreSelling,
 								blackListItemLoreSelling;
 	
-	private String 	upgradeName1,
-					upgradeName2;;
-	private List<String> 	upgrade1Lore,
-							upgrade2Lore;
+	public static ItemStack[] 	defaultFilterNormal = new ItemStack[45],
+								defaultFilterSelling = new ItemStack[45];
+	
+	
+	public static String 	upgradeName1,
+							upgradeName2;;
+	public static List<String> 	upgrade1Lore,
+								upgrade2Lore;
 	
 	public static ItemStack upgrade1,
 							upgrade2;
 	
 	public static boolean useLevel;		
 	public static boolean useSell;
+	
+	public static String rchHelp;
 
 	public static ArrayList<ChunkHopper> chunkHopper = new ArrayList<ChunkHopper>();
 	
@@ -93,6 +104,10 @@ public class Main extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		plugin = this;
+		if(setupEconomy())
+			economySetup = true;
+		else
+			economySetup = false;
 		getVersion();
 		initConfig();
 		init();
@@ -101,13 +116,13 @@ public class Main extends JavaPlugin {
 			initItems();
 	}
 	
-	private void initConfig() throws NullPointerException{
-		File f = new File(getDataFolder() + File.separator + "config.yml");
+	public static void initConfig() throws NullPointerException{
+		File f = new File(plugin.getDataFolder() + File.separator + "config.yml");
 		if (!f.exists()) {
 			try {
 				f.createNewFile();
 				OutputStream writer = new FileOutputStream(f);
-				InputStream out = this.getResource("config.yml");
+				InputStream out = plugin.getResource("config.yml");
 				byte[] linebuffer = new byte[out.available()];
 				out.read(linebuffer);
 				writer.write(linebuffer);
@@ -121,11 +136,16 @@ public class Main extends JavaPlugin {
 		prefix = conf.getString("Prefix");
 		prefix += new String(" ");
 		
+		rchHelp = conf.getString("rchHelp");
+		
 		cHDisplayName = conf.getString("ChunkHopper.Name");
 		cHLore = Arrays.asList(conf.getString("ChunkHopper.Lore").split(","));
 		
 		useLevel = conf.getBoolean("LevelSystem");
-		useSell = conf.getBoolean("UseSellSystem");
+		if(economySetup)
+			useSell = conf.getBoolean("UseSellSystem");
+		else
+			useSell = false;
 		
 		if(useLevel) {
 			upgradeName1 = conf.getString("Upgrade.1.Name");
@@ -158,30 +178,61 @@ public class Main extends JavaPlugin {
 		blackListItemLoreSelling = Arrays.asList(conf.getString("BlacklistLore.SellingFilter").split(","));
 		whiteListItemLoreNormal = Arrays.asList(conf.getString("WhitelistLore.NormalFilter").split(","));
 		whiteListItemLoreSelling = Arrays.asList(conf.getString("WhitelistLore.SellingFilter").split(","));
+		
+		if(conf.getBoolean("UseDefaultFilters")) {
+			for(int i = 1; i<= 9*5; i++) {
+				try {
+					defaultFilterNormal[i-1] = new ItemStack(Material.getMaterial(conf.getString("DefaultFilters.Normal."+i)));
+				}catch(Exception e) {
+					defaultFilterNormal[i-1] = new ItemStack(Material.AIR);
+				}
+				try {
+					defaultFilterSelling[i-1] = new ItemStack(Material.getMaterial(conf.getString("DefaultFilters.Selling."+i)));
+				}catch(Exception e) {
+					defaultFilterSelling[i-1] = new ItemStack(Material.AIR);
+				}
+			}
+		}
+		if(useSell)
+			initSellConf();
+	}
+	
+	private static void initSellConf(){
+		File f = new File(plugin.getDataFolder().getPath()+ File.separator + "worth.yml");
+		
+		if (!f.exists()) {
+			try {
+				f.createNewFile();
+				OutputStream writer = new FileOutputStream(f);
+				InputStream out = plugin.getResource("worth.yml");
+				byte[] linebuffer = new byte[out.available()];
+				out.read(linebuffer);
+				writer.write(linebuffer);
+				writer.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		sellConf = YamlConfiguration.loadConfiguration(f);
 	}
 
 	private void init() {
-		
 		pluginManager = Bukkit.getPluginManager();
 		log = Bukkit.getLogger();
+		
+		if(!economySetup) {
+			log.info("Selling option turned off, Vault is not installed!");
+		}
 		
 		if(useSell) {
 			if(getServer().getPluginManager().getPlugin("ShopGUIPlus") != null)
 				hasShopGuiPlus = true;
 			else {
 				hasShopGuiPlus = false;
-				Bukkit.getConsoleSender().sendMessage("§4ShopGUIPlus is not installed! Please put your prices in the essentials worth file!");
-			}
-			if(!hasShopGuiPlus && getServer().getPluginManager().getPlugin("Essentials") == null) {
-				log.info("Shutting down: plugins Essentials and ShopGUIPlus not installed! You have to install at least one of them!");
-				pluginManager.disablePlugin(this);
+				Bukkit.getConsoleSender().sendMessage("§4ShopGUIPlus is not installed! Please put your prices in the worth file!");
 			}
 			
-			if (!setupEconomy() ) {
-				log.info("Shutting down: plugin Vault not installed!");
-				pluginManager.disablePlugin(this);
-				return;
-			}
 		}else {
 			log.info("Not using sell option!");
 		}
@@ -244,6 +295,7 @@ public class Main extends JavaPlugin {
 
 		getCommand("rch").setExecutor(new HelpCmd());
 		getCommand("rch").setAliases(Arrays.asList(rchAliases));
+		getCommand("rch").setTabCompleter(new CommandTab());
 		getCommand("gch").setExecutor(new GetChunkHopperCmd());
 		getCommand("rmvch").setExecutor(new RmvFailedChunkHopperCmd());
 		getCommand("rchdebug").setExecutor(new StaticVariableDebug());
@@ -314,7 +366,7 @@ public class Main extends JavaPlugin {
 			}
 		}
 	}
-
+	
 	private boolean setupEconomy() {
 		if (getServer().getPluginManager().getPlugin("Vault") == null) {
 			return false;
@@ -379,5 +431,10 @@ public class Main extends JavaPlugin {
 	}
 	
 	
+	public static FileConfiguration getSellConf() {
+		if(hasShopGuiPlus) 
+			return null;
+		return sellConf;
+	}
 
 }

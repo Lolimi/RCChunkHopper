@@ -46,7 +46,7 @@ public class LevelTwo extends ChunkHopper {
 				this.normalFilter[i] = new ItemStack(Material.getMaterial(conf.getString("NormalFilter." + i)));
 			}
 		}else {
-			if(uid != null) {
+			if(uid == null) {
 				if(Main.getPlugin().isInChunkHopperChunk(loc).getLevel() != 1) return;
 				LevelOne old = (LevelOne) Main.getPlugin().isInChunkHopperChunk(loc);
 				file = old.getFile();
@@ -65,16 +65,27 @@ public class LevelTwo extends ChunkHopper {
 				chunkZ = old.getChunkZ();
 				ownerName = old.getOwnerName();
 				ownerUUID = old.getOwnerUUID();
-				normalWhitelist = false;
+				boolean useDefaultFilters = Main.getPlugin().getConfig().getBoolean("UseDefaultFilters");
+				if(!useDefaultFilters)
+					normalWhitelist = false;
+				else
+					normalWhitelist = Main.getPlugin().getConfig().getBoolean("DefaultFilters.Normal.Whitelist");
 				
 				conf.set("Owner.Name", Bukkit.getOfflinePlayer(ownerUUID).getName());
 				conf.set("Owner.UUID", ownerUUID.toString());
 
 				conf.set("NormalWhitelist", String.valueOf(normalWhitelist));
-
-				for (int i = 0; i < 9 * 5; i++) {
-					conf.set("NormalFilter." + i, "AIR");
-					this.normalFilter[i] = new ItemStack(Material.AIR);
+				
+				if(useDefaultFilters) {
+					this.normalFilter = Main.defaultFilterNormal;
+					for (int i = 0; i < 9 * 5; i++) {
+						conf.set("NormalFilter."+i, normalFilter[i].getType().name());
+					}
+				}else {
+					for (int i = 0; i < 9 * 5; i++) {
+						conf.set("NormalFilter." + i, "AIR");
+						this.normalFilter[i] = new ItemStack(Material.AIR);
+					}
 				}
 				try {
 					conf.save(file);
@@ -101,11 +112,23 @@ public class LevelTwo extends ChunkHopper {
 				ownerName = Bukkit.getOfflinePlayer(uid).getName();
 				ownerUUID = uid;
 				
-				normalWhitelist = false;
+				boolean useDefaultFilters = Main.getPlugin().getConfig().getBoolean("UseDefaultFilters");
+				if(!useDefaultFilters)
+					normalWhitelist = false;
+				else
+					normalWhitelist = Main.getPlugin().getConfig().getBoolean("DefaultFilters.Normal.Whitelist");
+				
 				conf.set("NormalWhitelist", String.valueOf(normalWhitelist));
-				for (int i = 0; i < 45; i++) {
-					this.normalFilter[i] = new ItemStack(Material.AIR);
-					conf.set("NormalFilter." + i, "AIR");
+				if(useDefaultFilters) {
+					this.normalFilter = Main.defaultFilterNormal;
+					for (int i = 0; i < 9 * 5; i++) {
+						conf.set("NormalFilter."+i, normalFilter[i].getType().name());
+					}
+				}else {
+					for (int i = 0; i < 9 * 5; i++) {
+						conf.set("NormalFilter." + i, "AIR");
+						this.normalFilter[i] = new ItemStack(Material.AIR);
+					}
 				}
 				
 				conf.set("Owner.Name", Bukkit.getOfflinePlayer(ownerUUID).getName());

