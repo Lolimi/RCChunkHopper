@@ -3,7 +3,7 @@ version: 1.4
 description: A plugin which adds a hopper that can pick up items inside a whole chunk. For more info about different options do /rch help.
 author: Lolimi
 
-main: lolimi.chunkHoppers.main.Main
+main: net.lolimi.chunkhoppers.main.Main
 
 api-version: 1.13
 

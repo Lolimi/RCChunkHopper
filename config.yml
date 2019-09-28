@@ -32,7 +32,7 @@ Upgrade:
 #The message a player gets 'Delay' ticks after joining
 #Seperate the lines with a comma (,)
 JoinMessage: 
-   Message: 'RC ChunkHoppers: want to pick up every item in one chunk instantly with only one hopper? Try out /rch'
+   Message: '§3RC ChunkHoppers: want to pick up every item in one chunk instantly with only one hopper? Try out /rch'
    Delay: 40
    
    
